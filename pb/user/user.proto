@@ -1,0 +1,26 @@
+syntax = "proto3";
+option go_package = "./user";
+
+package user;
+
+message SingleUser {
+  int32 id = 1;
+  string firstname = 2;
+  string lastname = 3;
+  string patronymic = 4;
+  string dateOfBirth = 5;
+  string about = 6;
+  string photo = 7;
+  string company = 8;
+}
+
+message Users{
+  repeated SingleUser users = 1;
+}
+
+message Empty {}
+
+service UserService {
+  rpc GetUser(SingleUser) returns (SingleUser) {}
+  rpc GetUsers(Empty) returns (Users) {}
+}
