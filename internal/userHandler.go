@@ -5,6 +5,6 @@ package internal
 //	"nihago/service.user/model"
 //)
 //
-//func GetSingleUser(id int32) model.User {
+//func GetUser(id int32) model.User {
 //
 //}

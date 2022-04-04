@@ -3,7 +3,7 @@ option go_package = "./user";
 
 package user;
 
-message SingleUser {
+message User {
   int32 id = 1;
   string firstname = 2;
   string lastname = 3;
@@ -11,16 +11,16 @@ message SingleUser {
   string dateOfBirth = 5;
   string about = 6;
   string photo = 7;
-  string company = 8;
+  int32 companyId = 8;
 }
 
-message Users{
-  repeated SingleUser users = 1;
+message UserList{
+  repeated User userList = 1;
 }
 
 message Empty {}
 
 service UserService {
-  rpc GetUser(SingleUser) returns (SingleUser) {}
-  rpc GetUsers(Empty) returns (Users) {}
+  rpc GetUser(User) returns (User) {}
+  rpc GetUserList(Empty) returns (UserList) {}
 }

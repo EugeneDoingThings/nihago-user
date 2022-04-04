@@ -4,22 +4,25 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 	"log"
 	"net"
 	"nihago-users/database"
 	"nihago-users/model"
-	"nihago-users/pb/user"
-
-	_ "github.com/lib/pq"
+	pb "nihago-users/pb/user"
 )
 
 type Server struct {
 	db *sql.DB
 }
 
+func (s *Server) GetUsers(ctx context.Context, empty *pb.Empty) (*pb.UserList, error) {
+	panic("implement me")
+}
+
 func (s *Server) Run() {
-	fmt.Printf("Starting a GRPC server at :8090")
+	fmt.Printf("Starting a GRPC server at :8090 \n")
 
 	lis, err := net.Listen("tcp", ":8090")
 	if err != nil {
@@ -34,27 +37,37 @@ func (s *Server) Run() {
 
 	grpcServer := grpc.NewServer()
 
-	user.RegisterUserServiceServer(grpcServer, s)
+	pb.RegisterUserServiceServer(grpcServer, s)
 
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %s", err)
 	}
 }
 
-func (s *Server) GetUser(ctx context.Context, in *user.SingleUser) (*user.SingleUser, error) {
-	log.Printf("Receive a GetUser request from client. SingleUser.Id: %d", in.Id)
+func (s *Server) GetUser(ctx context.Context, in *pb.User) (*pb.User, error) {
+	log.Printf("Receive a GetUser request from client. User.Id: %d", in.Id)
 	userModel := model.User{}
-	singleUserModel := userModel.GetUserById(in.Id, s.db)
-	singleUser := convertUser(singleUserModel)
-	return singleUser, nil
+	UserModel := userModel.GetUserById(in.Id, s.db)
+	User := convertUser(UserModel)
+	return User, nil
 }
 
-func (s *Server) GetUsers(ctx context.Context, empty *user.Empty) (*user.Users, error) {
-	panic("implement me")
+func (s *Server) GetUserList(ctx context.Context, empty *pb.Empty) (*pb.UserList, error) {
+	log.Printf("Receive a GetUsersList request from client")
+	userModel := model.User{}
+	users := userModel.GetUserList(s.db)
+	var usersList []*pb.User
+
+	for _, u := range users {
+		usersList = append(usersList, convertUser(&u))
+	}
+
+	usersListPb := pb.UserList{UserList: usersList}
+	return &usersListPb, nil
 }
 
-func convertUser(u *model.User) *user.SingleUser {
-	return &user.SingleUser{
+func convertUser(u *model.User) *pb.User {
+	return &pb.User{
 		Id:          u.Id,
 		Firstname:   u.Firstname,
 		Lastname:    u.Lastname,
@@ -62,6 +75,6 @@ func convertUser(u *model.User) *user.SingleUser {
 		DateOfBirth: u.DateOfBirth,
 		About:       u.About,
 		Photo:       u.Photo,
-		Company:     u.Company,
+		CompanyId:   u.CompanyId,
 	}
 }
