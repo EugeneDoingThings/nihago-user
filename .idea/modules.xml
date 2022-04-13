@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/nihago-users.iml" filepath="$PROJECT_DIR$/.idea/nihago-users.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/nihago-user.iml" filepath="$PROJECT_DIR$/.idea/nihago-user.iml" />
     </modules>
   </component>
 </project>
