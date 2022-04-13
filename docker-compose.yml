@@ -10,13 +10,13 @@ services:
     image: postgres
     env_file: .env.example
     environment:
-      POSTGRES_USER: ${USERS_DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${USERS_DB_PASSWORD:-1q2w3e4r}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-1q2w3e4r}
       PGDATA: /data/postgres
     volumes:
       - ./deploy/users_db:/data/postgres
     ports:
-      - "${USERS_DB_PORT:-15432}:5432"
+      - "${DB_PORT:-15432}:5432"
     networks:
       - postgres
     restart: unless-stopped
