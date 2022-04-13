@@ -8,13 +8,10 @@ create table users
     patronymic    varchar,
     date_of_birth date                      not null,
     about         varchar,
-    company_id    integer
-        constraint users_companies_id_fk
-            references companies
-            on delete set null,
+    company_id    integer,
     photo         varchar,
-    created_at    date default CURRENT_DATE not null,
-    updated_at    date default CURRENT_DATE not null
+    created_at timestamp(0) with time zone default current_timestamp not null,
+    updated_at timestamp(0) with time zone default current_timestamp not null
 );
 
 alter table users
