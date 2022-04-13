@@ -1,4 +1,4 @@
-module nihago-users
+module nihago-user
 
 go 1.16
 

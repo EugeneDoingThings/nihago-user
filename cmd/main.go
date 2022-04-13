@@ -1,8 +1,6 @@
 package main
 
-import (
-	"nihago-users/cmd/grpcserver"
-)
+import "nihago-user/cmd/grpcserver"
 
 func main() {
 	var server grpcserver.Server

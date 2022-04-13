@@ -8,9 +8,9 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"net"
-	"nihago-users/database"
-	"nihago-users/model"
-	pb "nihago-users/pb/user"
+	"nihago-user/database"
+	"nihago-user/model"
+	pb "nihago-user/pb/user"
 )
 
 type Server struct {
