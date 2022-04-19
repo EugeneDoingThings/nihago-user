@@ -19,3 +19,6 @@ alter table users
 
 create unique index users_id_uindex
     on users (id);
+
+
+
