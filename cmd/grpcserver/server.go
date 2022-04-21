@@ -35,6 +35,7 @@ func (s *Server) Run() {
 	s.db = pgsql.Init("postgres", "1q2w3e4r", "postgres", "15432")
 	defer pgsql.Instance.Close()
 
+	//TODO Восстановление после паники
 	//grpcServer := grpc.NewServer(
 	//	grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
 	//		grpc_recovery.StreamServerInterceptor(),
