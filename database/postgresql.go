@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"log"
 )
 
 type PostgreSQL struct {
@@ -16,7 +15,7 @@ func (p *PostgreSQL) Init(user, password, dbname, port string) *sql.DB {
 	var err error
 	p.Instance, err = sql.Open("postgres", connectionString)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	return p.Instance
 }

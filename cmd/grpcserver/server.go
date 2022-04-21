@@ -35,6 +35,14 @@ func (s *Server) Run() {
 	s.db = pgsql.Init("postgres", "1q2w3e4r", "postgres", "15432")
 	defer pgsql.Instance.Close()
 
+	//grpcServer := grpc.NewServer(
+	//	grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
+	//		grpc_recovery.StreamServerInterceptor(),
+	//	)),
+	//	grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+	//		grpc_recovery.UnaryServerInterceptor(),
+	//	)),
+	//)
 	grpcServer := grpc.NewServer()
 
 	pb.RegisterUserServiceServer(grpcServer, s)
