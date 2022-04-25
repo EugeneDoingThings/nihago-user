@@ -9,16 +9,13 @@ import (
 	"log"
 	"net"
 	"nihago-user/database"
+	"nihago-user/internal"
 	"nihago-user/model"
 	pb "nihago-user/pb/user"
 )
 
 type Server struct {
 	db *sql.DB
-}
-
-func (s *Server) GetUsers(ctx context.Context, empty *pb.Empty) (*pb.UserList, error) {
-	panic("implement me")
 }
 
 func (s *Server) Run() {
@@ -70,6 +67,9 @@ func (s *Server) GetUserList(ctx context.Context, empty *pb.Empty) (*pb.UserList
 	for _, u := range users {
 		usersList = append(usersList, convertUser(&u))
 	}
+
+	companyList := internal.GetCompanies()
+	log.Println(companyList)
 
 	usersListPb := pb.UserList{UserList: usersList}
 	return &usersListPb, nil

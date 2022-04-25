@@ -1,0 +1,20 @@
+syntax = "proto3";
+option go_package = "./company";
+
+package company;
+
+message Company {
+  int32 id = 1;
+  string name = 2;
+}
+
+message CompanyList{
+  repeated Company companyList = 1;
+}
+
+message Empty {}
+
+service CompanyService {
+  rpc GetCompany(Company) returns (Company) {}
+  rpc GetCompanyList(Empty) returns (CompanyList) {}
+}
