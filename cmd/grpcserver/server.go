@@ -76,8 +76,12 @@ func (s *Server) GetUserList(ctx context.Context, empty *pb.Empty) (*pb.UserList
 
 func (s *Server) convertUser(u *model.User) *pb.User {
 
-	companyName, _ := s.cache.Get(string(u.CompanyId))
-	if companyName == nil {
+	var companyName string
+	company, _ := s.cache.Get(string(u.CompanyId))
+
+	if company != nil {
+		companyName = company.(string)
+	} else {
 		companyName = "undefined"
 	}
 
@@ -89,6 +93,6 @@ func (s *Server) convertUser(u *model.User) *pb.User {
 		DateOfBirth: u.DateOfBirth,
 		About:       u.About,
 		Photo:       u.Photo,
-		Company:     companyName.(string),
+		Company:     companyName,
 	}
 }
