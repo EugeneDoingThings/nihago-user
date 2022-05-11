@@ -47,8 +47,9 @@ func (s *Server) ConfigureCache() {
 	companyList := internal.GetCompanies()
 	for _, company := range companyList {
 		s.cache.Set(string(company.Id), company.Name, cache.DefaultExpiration)
-		//log.Println(s.cache.Get(string(company.Id)))
 	}
+	log.Println("Configuring company cache...")
+
 }
 
 func (s *Server) GetUser(ctx context.Context, in *pb.User) (*pb.User, error) {
