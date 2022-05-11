@@ -53,7 +53,7 @@ func (s *Server) ConfigureCache() {
 }
 
 func (s *Server) GetUser(ctx context.Context, in *pb.User) (*pb.User, error) {
-	log.Printf("Receive a GetUser request from client. User.Id: %d", in.Id)
+	log.Printf("Received a GetUser request from client. User.Id: %d", in.Id)
 	userModel := model.User{}
 	UserModel := userModel.GetUserById(in.Id, s.db)
 	User := s.convertUser(UserModel)
@@ -61,7 +61,7 @@ func (s *Server) GetUser(ctx context.Context, in *pb.User) (*pb.User, error) {
 }
 
 func (s *Server) GetUserList(ctx context.Context, empty *pb.Empty) (*pb.UserList, error) {
-	log.Printf("Receive a GetUsersList request from client")
+	log.Printf("Received a GetUsersList request from client")
 	userModel := model.User{}
 	users := userModel.GetUserList(s.db)
 	var usersList []*pb.User
