@@ -7,12 +7,12 @@ import (
 	pb "nihago-user/pb/company"
 )
 
-type Company struct {
-	id   int32
-	name string
-}
+//type Company struct {
+//	id   int32
+//	name string
+//}
 
-func GetCompanies() map[int32]string {
+func GetCompanies() []*pb.Company {
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial(":8100", grpc.WithInsecure())
 	if err != nil {
@@ -33,11 +33,11 @@ func GetCompanies() map[int32]string {
 		panic(err)
 	}
 
-	list := make(map[int32]string)
+	//list := make(map[int32]string)
+	//
+	//for _, company := range companyList.CompanyList {
+	//	list[company.Id] = company.Name
+	//}
 
-	for _, company := range companyList.CompanyList {
-		list[company.Id] = company.Name
-	}
-
-	return list
+	return companyList.CompanyList
 }

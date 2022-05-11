@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
+	"github.com/patrickmn/go-cache"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -15,7 +16,8 @@ import (
 )
 
 type Server struct {
-	db *sql.DB
+	db    *sql.DB
+	cache *cache.Cache
 }
 
 func (s *Server) Run() {
@@ -27,20 +29,10 @@ func (s *Server) Run() {
 	}
 
 	// Initialize User database
-
 	pgsql := database.PostgreSQL{}
 	s.db = pgsql.Init("postgres", "1q2w3e4r", "postgres", "15432")
 	defer pgsql.Instance.Close()
 
-	//TODO Восстановление после паники
-	//grpcServer := grpc.NewServer(
-	//	grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
-	//		grpc_recovery.StreamServerInterceptor(),
-	//	)),
-	//	grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-	//		grpc_recovery.UnaryServerInterceptor(),
-	//	)),
-	//)
 	grpcServer := grpc.NewServer()
 
 	pb.RegisterUserServiceServer(grpcServer, s)
@@ -50,11 +42,20 @@ func (s *Server) Run() {
 	}
 }
 
+func (s *Server) ConfigureCache() {
+	s.cache = cache.New(cache.NoExpiration, cache.NoExpiration)
+	companyList := internal.GetCompanies()
+	for _, company := range companyList {
+		s.cache.Set(string(company.Id), company.Name, cache.DefaultExpiration)
+		//log.Println(s.cache.Get(string(company.Id)))
+	}
+}
+
 func (s *Server) GetUser(ctx context.Context, in *pb.User) (*pb.User, error) {
 	log.Printf("Receive a GetUser request from client. User.Id: %d", in.Id)
 	userModel := model.User{}
 	UserModel := userModel.GetUserById(in.Id, s.db)
-	User := convertUser(UserModel)
+	User := s.convertUser(UserModel)
 	return User, nil
 }
 
@@ -65,17 +66,20 @@ func (s *Server) GetUserList(ctx context.Context, empty *pb.Empty) (*pb.UserList
 	var usersList []*pb.User
 
 	for _, u := range users {
-		usersList = append(usersList, convertUser(&u))
+		usersList = append(usersList, s.convertUser(&u))
 	}
-
-	companyList := internal.GetCompanies()
-	log.Println(companyList)
 
 	usersListPb := pb.UserList{UserList: usersList}
 	return &usersListPb, nil
 }
 
-func convertUser(u *model.User) *pb.User {
+func (s *Server) convertUser(u *model.User) *pb.User {
+
+	companyName, _ := s.cache.Get(string(u.CompanyId))
+	if companyName == nil {
+		companyName = "undefined"
+	}
+
 	return &pb.User{
 		Id:          u.Id,
 		Firstname:   u.Firstname,
@@ -84,6 +88,6 @@ func convertUser(u *model.User) *pb.User {
 		DateOfBirth: u.DateOfBirth,
 		About:       u.About,
 		Photo:       u.Photo,
-		CompanyId:   u.CompanyId,
+		Company:     companyName.(string),
 	}
 }
