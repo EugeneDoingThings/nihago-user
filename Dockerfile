@@ -7,7 +7,7 @@ WORKDIR /app
 COPY . ./
 RUN go mod download
 
-RUN go build -o /nihago-user
+RUN cd cmd && go build -o /nihago-user
 
 EXPOSE 8090
 
