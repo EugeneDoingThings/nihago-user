@@ -2,7 +2,8 @@ package model
 
 import (
 	"database/sql"
-	"fmt"
+	sq "github.com/Masterminds/squirrel"
+	"log"
 )
 
 type User struct {
@@ -17,10 +18,19 @@ type User struct {
 }
 
 func (u *User) GetUserById(id int32, db *sql.DB) *User {
-	err := db.QueryRow(
-		"SELECT id, firstname, lastname, patronymic, date_of_birth, about, photo, company_id "+
-			"FROM users "+
-			"WHERE id=$1", id).Scan(
+	query, args, err := sq.
+		Select("id, firstname, lastname, patronymic, date_of_birth, about, photo, company_id").
+		From("users").
+		PlaceholderFormat(sq.Dollar).
+		Where(sq.Eq{"id": id}).
+		ToSql()
+
+	if err != nil {
+		log.Fatalf("Unable to build SELECT query: %v", err)
+		return nil
+	}
+
+	err = db.QueryRow(query, args...).Scan(
 		&u.Id,
 		&u.Firstname,
 		&u.Lastname,
@@ -32,16 +42,24 @@ func (u *User) GetUserById(id int32, db *sql.DB) *User {
 	)
 
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalf("Unable to execute SELECT query: %v", err)
 		return nil
 	}
 	return u
 }
 
 func (u *User) GetUserList(db *sql.DB) []User {
-	rows, _ := db.Query(
-		"SELECT id, firstname, lastname, patronymic, date_of_birth, about, photo, company_id " +
-			"FROM users")
+	query, _, err := sq.
+		Select("id, firstname, lastname, patronymic, date_of_birth, about, photo, company_id").
+		From("users").
+		ToSql()
+
+	if err != nil {
+		log.Fatalf("Unable to build SELECT query: %v", err)
+		return nil
+	}
+
+	rows, _ := db.Query(query)
 
 	var users []User
 
