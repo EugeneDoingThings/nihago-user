@@ -6,11 +6,11 @@ networks:
     driver: bridge
 
 services:
-  user:
-    build:
-      context: .
-    ports:
-    - 8090:8090
+#  user:
+#    build:
+#      context: .
+#    ports:
+#    - 8090:8090
 
   users_db:
     image: postgres
